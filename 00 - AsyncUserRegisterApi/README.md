@@ -1,6 +1,6 @@
 # Simple Async User Register API
 
-A simple serverless API for an interview assessment that demonstrates async processing with AWS services.
+A simple serverless API that demonstrates async processing with AWS services.
 
 ## 🎯 What This API Does
 
@@ -57,7 +57,7 @@ npm run deploy
 
 ### 5. Test
 ```bash
-# Run automated tests
+# Run automated tests, all api test already write in test-api.sh
 npm test
 ```
 
@@ -133,4 +133,4 @@ This is a simplified implementation focusing on:
 - Proper error handling
 - Testing capabilities
 
-For production, you'd add authentication, validation, monitoring, etc.
+For production, add authentication, validation, monitoring, Add unit test, integration test, CICD pipielineetc.

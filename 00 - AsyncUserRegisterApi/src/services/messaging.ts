@@ -10,10 +10,10 @@ export class MessagingService {
   private readonly boardCreationQueueUrl: string;
 
   constructor() {
-    // These will be set by the serverless framework
-    this.userRegistrationTopicArn = `arn:aws:sns:${process.env.AWS_REGION}:${process.env.AWS_ACCOUNT_ID}:${process.env.USER_REGISTRATION_TOPIC}`;
-    this.messagePostingTopicArn = `arn:aws:sns:${process.env.AWS_REGION}:${process.env.AWS_ACCOUNT_ID}:${process.env.MESSAGE_POSTING_TOPIC}`;
-    this.boardCreationQueueUrl = `https://sqs.${process.env.AWS_REGION}.amazonaws.com/${process.env.AWS_ACCOUNT_ID}/${process.env.BOARD_CREATION_QUEUE}`;
+    // Use the actual ARNs and URLs provided by serverless framework
+    this.userRegistrationTopicArn = process.env.USER_REGISTRATION_TOPIC_ARN!;
+    this.messagePostingTopicArn = process.env.MESSAGE_POSTING_TOPIC_ARN!;
+    this.boardCreationQueueUrl = process.env.BOARD_CREATION_QUEUE_URL!;
   }
 
   async publishUserRegistration(payload: any): Promise<void> {

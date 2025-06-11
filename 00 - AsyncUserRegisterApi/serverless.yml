@@ -16,6 +16,12 @@ provider:
     USER_REGISTRATION_TOPIC: ${self:service}-user-registration-${self:provider.stage}
     MESSAGE_POSTING_TOPIC: ${self:service}-message-posting-${self:provider.stage}
     BOARD_CREATION_QUEUE: ${self:service}-board-creation-${self:provider.stage}
+    USER_REGISTRATION_TOPIC_ARN:
+      Ref: UserRegistrationTopic
+    MESSAGE_POSTING_TOPIC_ARN:
+      Ref: MessagePostingTopic
+    BOARD_CREATION_QUEUE_URL:
+      Ref: BoardCreationQueue
     WEBSOCKET_ENDPOINT: 
       Fn::Sub: "https://${WebsocketsApi}.execute-api.${AWS::Region}.amazonaws.com/${self:provider.stage}"
     

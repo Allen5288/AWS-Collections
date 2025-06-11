@@ -60,7 +60,7 @@ endpoints:
   ...
 ```
 
-Update your `.env` file with these URLs and run tests:
+Update your TEST file with these URLs and run tests:
 ```bash
 npm test
 ```
@@ -69,17 +69,3 @@ npm test
 ```bash
 npm run remove
 ```
-
-## Troubleshooting
-
-**Permission errors?**
-- Make sure your IAM user has `AdministratorAccess` policy
-- Check AWS CLI configuration: `aws configure list`
-
-**Region issues?**
-- Stick with `us-east-1` for this demo
-- Make sure serverless.yml and AWS CLI use same region
-
-**Still having issues?**
-- Check AWS CloudFormation console for error details
-- Look at Lambda function logs in CloudWatch
