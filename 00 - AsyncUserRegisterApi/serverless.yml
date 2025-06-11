@@ -1,0 +1,263 @@
+service: async-user-register-api
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  stage: ${opt:stage, 'dev'}
+  
+  environment:
+    USERS_TABLE: ${self:service}-users-${self:provider.stage}
+    BOARDS_TABLE: ${self:service}-boards-${self:provider.stage}
+    MESSAGES_TABLE: ${self:service}-messages-${self:provider.stage}
+    CONNECTIONS_TABLE: ${self:service}-connections-${self:provider.stage}
+    USER_REGISTRATION_TOPIC: ${self:service}-user-registration-${self:provider.stage}
+    MESSAGE_POSTING_TOPIC: ${self:service}-message-posting-${self:provider.stage}
+    BOARD_CREATION_QUEUE: ${self:service}-board-creation-${self:provider.stage}
+    WEBSOCKET_ENDPOINT: 
+      Fn::Sub: "https://${WebsocketsApi}.execute-api.${AWS::Region}.amazonaws.com/${self:provider.stage}"
+    
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - Fn::GetAtt: [UsersTable, Arn]
+            - Fn::GetAtt: [BoardsTable, Arn]
+            - Fn::GetAtt: [MessagesTable, Arn]
+            - Fn::GetAtt: [ConnectionsTable, Arn]
+            - Fn::Sub: "${UsersTable.Arn}/index/*"
+            - Fn::Sub: "${MessagesTable.Arn}/index/*"
+        - Effect: Allow
+          Action:
+            - sns:Publish
+          Resource:
+            - Ref: UserRegistrationTopic
+            - Ref: MessagePostingTopic
+        - Effect: Allow
+          Action:
+            - sqs:SendMessage
+            - sqs:ReceiveMessage
+            - sqs:DeleteMessage
+          Resource:
+            - Fn::GetAtt: [BoardCreationQueue, Arn]
+        - Effect: Allow
+          Action:
+            - execute-api:ManageConnections
+          Resource:
+            - Fn::Sub: "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${WebsocketsApi}/*"
+
+plugins:
+  - serverless-plugin-typescript
+
+functions:
+  # API Gateway REST endpoints
+  registerUser:
+    handler: src/handlers/api/registerUser.handler
+    events:
+      - http:
+          path: /api/v1/register
+          method: post
+          cors: true
+          
+  getUserByEmail:
+    handler: src/handlers/api/getUserByEmail.handler
+    events:
+      - http:
+          path: /api/v1/user/{email}
+          method: get
+          cors: true
+          
+  listBoards:
+    handler: src/handlers/api/listBoards.handler
+    events:
+      - http:
+          path: /api/v1/boards
+          method: get
+          cors: true
+          
+  createBoard:
+    handler: src/handlers/api/createBoard.handler
+    events:
+      - http:
+          path: /api/v1/boards
+          method: post
+          cors: true
+          
+  postMessage:
+    handler: src/handlers/api/postMessage.handler
+    events:
+      - http:
+          path: /api/v1/boards/{boardId}/messages
+          method: post
+          cors: true
+          
+  getMessages:
+    handler: src/handlers/api/getMessages.handler
+    events:
+      - http:
+          path: /api/v1/boards/{boardId}/messages
+          method: get
+          cors: true
+  # Async processors
+  processUserRegistration:
+    handler: src/handlers/processors/processUserRegistration.handler
+    events:
+      - sns:
+          arn:
+            Ref: UserRegistrationTopic
+            
+  processBoardCreation:
+    handler: src/handlers/processors/processBoardCreation.handler
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt: [BoardCreationQueue, Arn]
+          batchSize: 1
+          
+  processMessagePosting:
+    handler: src/handlers/processors/processMessagePosting.handler
+    events:
+      - sns:
+          arn:
+            Ref: MessagePostingTopic
+
+  # WebSocket handlers
+  websocketConnect:
+    handler: src/handlers/websocket/connect.handler
+    events:
+      - websocket:
+          route: $connect
+          
+  websocketDisconnect:
+    handler: src/handlers/websocket/disconnect.handler
+    events:
+      - websocket:
+          route: $disconnect
+          
+  websocketSubscribe:
+    handler: src/handlers/websocket/subscribe.handler
+    events:
+      - websocket:
+          route: subscribe
+
+resources:
+  Resources:
+    # DynamoDB Tables
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.USERS_TABLE}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: email
+            AttributeType: S
+          - AttributeName: userId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: email
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: UserIdIndex
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+              
+    BoardsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.BOARDS_TABLE}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: boardId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: boardId
+            KeyType: HASH
+            
+    MessagesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.MESSAGES_TABLE}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: boardId
+            AttributeType: S
+          - AttributeName: messageId
+            AttributeType: S
+          - AttributeName: timestamp
+            AttributeType: N
+        KeySchema:
+          - AttributeName: boardId
+            KeyType: HASH
+          - AttributeName: messageId
+            KeyType: RANGE
+        GlobalSecondaryIndexes:
+          - IndexName: BoardMessagesIndex
+            KeySchema:
+              - AttributeName: boardId
+                KeyType: HASH
+              - AttributeName: timestamp
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+              
+    ConnectionsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.CONNECTIONS_TABLE}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: connectionId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: connectionId
+            KeyType: HASH
+
+    # SNS Topics
+    UserRegistrationTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${self:provider.environment.USER_REGISTRATION_TOPIC}
+        
+    MessagePostingTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${self:provider.environment.MESSAGE_POSTING_TOPIC}
+
+    # SQS Queues
+    BoardCreationQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:provider.environment.BOARD_CREATION_QUEUE}
+        VisibilityTimeoutSeconds: 60
+        
+  Outputs:
+    ApiGatewayRestApiId:
+      Value:
+        Ref: ApiGatewayRestApi
+      Export:
+        Name: ${self:service}-${self:provider.stage}-api-id
+        
+    WebSocketApiId:
+      Value:
+        Ref: WebsocketsApi
+      Export:
+        Name: ${self:service}-${self:provider.stage}-websocket-api-id
+        
+    ApiGatewayRestApiRootResourceId:
+      Value:
+        Fn::GetAtt: [ApiGatewayRestApi, RootResourceId]
+      Export:
+        Name: ${self:service}-${self:provider.stage}-root-resource-id
