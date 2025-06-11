@@ -132,4 +132,5 @@ This is a simplified implementation focusing on:
 - Testing capabilities
 
 ## 📝 Further implementation things:
-For production, add authentication, validation, monitoring, Add unit test, integration test, CICD pipielineetc.
+For production, add authentication, validation, monitoring, log syetem, Add unit test, integration test, CICD pipielineetc.
+And Remove all console log~~！but currently for test version
