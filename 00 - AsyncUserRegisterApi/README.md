@@ -96,8 +96,6 @@ curl "YOUR_API_URL/api/v1/boards"
 
 Create `.env` file with your AWS credentials:
 ```bash
-AWS_ACCESS_KEY_ID=your_access_key
-AWS_SECRET_ACCESS_KEY=your_secret_key
 AWS_DEFAULT_REGION=us-east-1
 ```
 
