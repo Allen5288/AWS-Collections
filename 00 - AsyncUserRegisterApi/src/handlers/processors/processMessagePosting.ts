@@ -1,6 +1,6 @@
-import { SNSHandler } from 'aws-lambda';
+import { SNSHandler, SNSEventRecord } from 'aws-lambda';
 import { v4 as uuidv4 } from 'uuid';
-import { Message, MessagePostEvent, SNSEventRecord } from '../../types';
+import { Message, MessagePostEvent } from '../../types';
 import { dynamoDBService } from '../../services/dynamodb';
 import { webSocketService } from '../../services/websocket';
 import { getCurrentTimestamp, parseJsonSafely } from '../../utils/response';

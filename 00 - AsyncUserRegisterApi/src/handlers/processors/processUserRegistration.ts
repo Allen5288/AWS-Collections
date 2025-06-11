@@ -1,6 +1,6 @@
-import { SNSHandler } from 'aws-lambda';
+import { SNSHandler, SNSEventRecord } from 'aws-lambda';
 import { v4 as uuidv4 } from 'uuid';
-import { User, UserRegistrationEvent, SNSEventRecord } from '../../types';
+import { User, UserRegistrationEvent } from '../../types';
 import { dynamoDBService } from '../../services/dynamodb';
 import { getCurrentTimestamp, parseJsonSafely } from '../../utils/response';
 

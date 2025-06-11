@@ -4,8 +4,8 @@
 # This script demonstrates how to test all the API endpoints
 
 # Configuration
-API_BASE_URL="https://your-api-id.execute-api.us-east-1.amazonaws.com/dev/api/v1"
-WEBSOCKET_URL="wss://your-websocket-id.execute-api.us-east-1.amazonaws.com/dev"
+API_BASE_URL="https://czicg2e1el.execute-api.us-east-1.amazonaws.com/dev/api/v1"
+WEBSOCKET_URL="wss://w7hs5zpy2g.execute-api.us-east-1.amazonaws.com/dev"
 
 echo "=== Async User Register API Testing ==="
 echo "API Base URL: $API_BASE_URL"

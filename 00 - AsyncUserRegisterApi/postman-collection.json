@@ -3,10 +3,10 @@
     "name": "Async User Register API",
     "description": "Postman collection for testing the Async User Register API",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "variable": [    {
+  },  "variable": [
+    {
       "key": "base_url",
-      "value": "https://your-api-id.execute-api.us-east-1.amazonaws.com/dev/api/v1",
+      "value": "https://czicg2e1el.execute-api.us-east-1.amazonaws.com/dev/api/v1",
       "type": "string"
     },
     {

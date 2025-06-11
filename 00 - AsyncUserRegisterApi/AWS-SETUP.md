@@ -3,8 +3,7 @@
 ## Quick Setup
 
 ### 1. Get AWS Account
-- Sign up at https://aws.amazon.com/ (free tier available)
-- You'll need a credit card but won't be charged for this simple demo
+- Sign up at https://aws.amazon.com/
 
 ### 2. Create Access Keys
 1. Go to AWS Console → IAM → Users → Create User

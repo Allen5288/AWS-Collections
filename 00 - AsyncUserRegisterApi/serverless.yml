@@ -108,6 +108,7 @@ functions:
           path: /api/v1/boards/{boardId}/messages
           method: get
           cors: true
+          
   # Async processors
   processUserRegistration:
     handler: src/handlers/processors/processUserRegistration.handler
@@ -115,7 +116,8 @@ functions:
       - sns:
           arn:
             Ref: UserRegistrationTopic
-            
+          topicName: ${self:provider.environment.USER_REGISTRATION_TOPIC}
+          
   processBoardCreation:
     handler: src/handlers/processors/processBoardCreation.handler
     events:
@@ -130,6 +132,7 @@ functions:
       - sns:
           arn:
             Ref: MessagePostingTopic
+          topicName: ${self:provider.environment.MESSAGE_POSTING_TOPIC}
 
   # WebSocket handlers
   websocketConnect:
@@ -241,7 +244,7 @@ resources:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: ${self:provider.environment.BOARD_CREATION_QUEUE}
-        VisibilityTimeoutSeconds: 60
+        VisibilityTimeout: 60
         
   Outputs:
     ApiGatewayRestApiId:
