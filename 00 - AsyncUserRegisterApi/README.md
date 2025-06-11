@@ -2,6 +2,11 @@
 
 A simple serverless API that demonstrates async processing with AWS services.
 
+## 📝 Further implementation things:
+For production and furthermore development, add authentication, validation, monitoring, log system, add unit test, integration test, CICD pipeline.
+
+And remove all console log~~！ But currently, for the test version
+
 ## 🎯 What This API Does
 
 - **Register users** → Process asynchronously via SNS → Store in DynamoDB  
@@ -130,7 +135,3 @@ This is a simplified implementation focusing on:
 - Real-time features (WebSocket)
 - Proper error handling
 - Testing capabilities
-
-## 📝 Further implementation things:
-For production, add authentication, validation, monitoring, log syetem, Add unit test, integration test, CICD pipielineetc.
-And Remove all console log~~！but currently for test version
