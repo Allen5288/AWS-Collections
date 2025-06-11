@@ -3,7 +3,7 @@
 A simple serverless API that demonstrates async processing with AWS services.
 
 ## 📝 Further implementation things:
-For production and furthermore development, add authentication, validation, monitoring, log system, add unit test, integration test, CICD pipeline.
+For production and furthermore development, add authentication, add more user vertification process like Cognito, adding JWT token, validation, monitoring, log monitor system such as using cloudwatch, add unit test, integration test, CICD pipeline.
 
 And remove all console log~~！ But currently, for the test version
 
