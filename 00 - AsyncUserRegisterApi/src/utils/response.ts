@@ -14,6 +14,7 @@ export function createSuccessResponse<T>(
   return {
     statusCode,
     headers: {
+      // serverless.yml with cors: true - API Gateway handles CORS automatically, no need to set headers
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Headers': 'Content-Type',

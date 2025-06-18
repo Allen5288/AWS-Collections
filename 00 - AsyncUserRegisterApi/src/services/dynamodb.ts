@@ -2,7 +2,20 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, GetCommand, PutCommand, ScanCommand, QueryCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { User, Board, Message, WebSocketConnection } from '../types';
 
+// Create the base DynamoDB client
 const client = new DynamoDBClient({ region: process.env.AWS_REGION || 'us-east-1' });
+
+// DynamoDBDocumentClient is a wrapper around DynamoDBClient that provides several key benefits:
+// 1. Automatic marshalling/unmarshalling: Converts JavaScript objects to DynamoDB's AttributeValue format and vice versa
+// 2. Simplified API: No need to specify data types (S, N, B, etc.) - it infers them automatically
+// 3. Native JavaScript types: Work directly with strings, numbers, booleans, arrays, and objects
+// 4. Better developer experience: Less boilerplate code and fewer conversion errors
+// 
+// Without DocumentClient, you'd need to write:
+// { email: { S: "user@example.com" }, userId: { S: "123" }, age: { N: "25" } }
+// 
+// With DocumentClient, you can simply write:
+// { email: "user@example.com", userId: "123", age: 25 }
 const docClient = DynamoDBDocumentClient.from(client);
 
 export class DynamoDBService {
