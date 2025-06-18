@@ -3,7 +3,7 @@
 A simple serverless API that demonstrates async processing with AWS services.
 
 ## 📝 Further implementation things:
-For production and furthermore development, add authentication, add more user vertification process like Cognito, adding JWT token, validation, monitoring, log monitor system such as using cloudwatch, add unit test, integration test, CICD pipeline.
+For production and furthermore development, add multiple middleware, add authentication, add more user vertification process like Cognito, adding JWT token, validation, pagination, filtering, rate limit, eror handling, api document, security header, input sanitization, monitoring, cloudwatch, add unit test, integration test, CICD pipeline.
 
 And remove all console log~~！ But currently, for the test version
 
@@ -125,13 +125,3 @@ npm run remove
 ```
 
 This removes all AWS resources to avoid charges.
-
-## 📝 Interview Notes
-
-This is a simplified implementation focusing on:
-- Async processing patterns (SNS/SQS)
-- Serverless architecture
-- TypeScript usage
-- Real-time features (WebSocket)
-- Proper error handling
-- Testing capabilities
